@@ -1,2 +1,6 @@
-Palapon Somsup  
-056860405059-7
+## My information ##
+- Palapon Somsup  
+- 056860405059-7
+
+
+
