@@ -1,6 +1,8 @@
-## My information ##
-- Palapon Somsup  
+# Cyber Security
+
+## My information
+- Palapon Somsup
 - 056860405059-7
-
-
-
+- อยากเรียนรู้พื้นฐานด้าน Cybersecurity
+- อยากเข้าใจการป้องกันระบบและการโจมตีรูปแบบต่าง ๆ
+- สามารถนำความรู้ไปประยุกต์ใช้ในการทำงานจริง
