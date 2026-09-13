@@ -1,11 +1,11 @@
 module.exports = ({ env }) => ({
   email: {
     config: {
-      provider: '/opt/app/config/email-provider',
+      provider: '@strapi/provider-email-sendmail',
       providerOptions: {},
       settings: {
-        defaultFrom: 'no-reply@strapi.io',
-        defaultReplyTo: 'no-reply@strapi.io',
+        defaultFrom: env('EMAIL_FROM', 'no-reply@strapi.io'),
+        defaultReplyTo: env('EMAIL_REPLY_TO', 'no-reply@strapi.io'),
       },
     },
   },

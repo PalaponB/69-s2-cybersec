@@ -7,11 +7,13 @@
 @admin_password = {{$dotenv ADMIN_PASSWORD}}
 @admin_new_password = {{$dotenv ADMIN_NEW_PASSWORD}}
 @admin_reset_token = {{$dotenv ADMIN_RESET_TOKEN}}
+# ADMIN_JWT: อย่าเก็บถาวร หลัง login สำเร็จให้เอา token จาก response ไปใส่ใน .env ชั่วคราวเพื่อทดสอบ 1.4
 @admin_jwt = {{$dotenv ADMIN_JWT}}
 @user_email = {{$dotenv USER_EMAIL}}
 @user_password = {{$dotenv USER_PASSWORD}}
 @user_new_password = {{$dotenv USER_NEW_PASSWORD}}
 @user_reset_code = {{$dotenv USER_RESET_CODE}}
+# USER_JWT: อย่าเก็บถาวร หลัง login สำเร็จให้เอา token จาก response ไปใส่ใน .env ชั่วคราวเพื่อทดสอบ 2.4
 @user_jwt = {{$dotenv USER_JWT}}
 
 ## 1.Admin
