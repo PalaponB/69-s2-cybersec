@@ -1,68 +1,100 @@
 # REST
 
+## Variables
+@hostname = {{$dotenv HOSTNAME}}
+@port = {{$dotenv APP_PORT}}
+@admin_email = {{$dotenv ADMIN_EMAIL}}
+@admin_password = {{$dotenv ADMIN_PASSWORD}}
+@admin_new_password = {{$dotenv ADMIN_NEW_PASSWORD}}
+@admin_reset_token = {{$dotenv ADMIN_RESET_TOKEN}}
+@admin_jwt = {{$dotenv ADMIN_JWT}}
+@user_email = {{$dotenv USER_EMAIL}}
+@user_password = {{$dotenv USER_PASSWORD}}
+@user_new_password = {{$dotenv USER_NEW_PASSWORD}}
+@user_reset_code = {{$dotenv USER_RESET_CODE}}
+@user_jwt = {{$dotenv USER_JWT}}
+
 ## 1.Admin
 ### 1.1 Login
-POST http://localhost:9092/admin/login
+POST http://{{hostname}}:{{port}}/admin/login
 Content-Type: application/json
 
 {
-    "email": "",
-    "password": "",
+    "email": "{{admin_email}}",
+    "password": "{{admin_password}}",
     "rememberMe": false
 }
 
-### 1.2 Register
-POST http://localhost:9092/admin/register-admin
+### 1.2 Register (admin) one time for first time to create admin account
+POST http://{{hostname}}:{{port}}/admin/register-admin
 Content-Type: application/json
 
 {
-    "firstname": "",
-    "lastname": "",
-    "email": "",
-    "password": ""
+    "firstname": "Palapon",
+    "lastname": "Somsup",
+    "email": "{{admin_email}}",
+    "password": "{{admin_password}}"
 }
 
 ### 1.3 Forgot Password
-POST http://localhost:9092/admin/forgot-password
+POST http://{{hostname}}:{{port}}/admin/forgot-password
 Content-Type: application/json
 
 {
-    "email": ""
+    "email": "{{admin_email}}"
+}
+
+### 1.3.1 Reset Password
+POST http://{{hostname}}:{{port}}/admin/reset-password
+Content-Type: application/json
+
+{
+    "resetPasswordToken": "{{admin_reset_token}}",
+    "password": "{{admin_new_password}}"
 }
 
 ### 1.4 Profile
-GET http://localhost:9092/admin/users/me
-Authorization: Bearer YOUR_JWT_TOKEN_HERE
-
+GET http://{{hostname}}:{{port}}/admin/users/me
+Authorization: Bearer {{admin_jwt}}
 
 ## 2.User
 ### 2.1 Login
-POST http://localhost:9092/api/auth/local
+POST http://{{hostname}}:{{port}}/api/auth/local
 Content-Type: application/json
 
 {
-    "identifier": "",
-    "password": ""
+    "identifier": "{{user_email}}",
+    "password": "{{user_password}}"
 }
 
 ### 2.2 Register
-POST http://localhost:9092/api/auth/local/register
+POST http://{{hostname}}:{{port}}/api/auth/local/register
 Content-Type: application/json
 
 {
-    "username": "",
-    "email": "",
-    "password": ""
+    "username": "Palapon",
+    "email": "{{user_email}}",
+    "password": "{{user_password}}"
 }
 
 ### 2.3 Forgot Password
-POST http://localhost:9092/api/auth/forgot-password
+POST http://{{hostname}}:{{port}}/api/auth/forgot-password
 Content-Type: application/json
 
 {
-    "email": ""
+    "email": "{{user_email}}"
+}
+
+### 2.3.1 Reset Password
+POST http://{{hostname}}:{{port}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+    "code": "{{user_reset_code}}",
+    "password": "{{user_new_password}}",
+    "passwordConfirmation": "{{user_new_password}}"
 }
 
 ### 2.4 Profile
-GET http://localhost:9092/api/users/me
-Authorization: Bearer YOUR_JWT_TOKEN_HERE
+GET http://{{hostname}}:{{port}}/api/users/me
+Authorization: Bearer {{user_jwt}}
