@@ -40,4 +40,10 @@ module.exports = [
       windowMs: 60 * 1000,
     },
   },
+  {
+    name: 'global::password-policy',
+    config: {
+      minLength: 8,
+    },
+  },
 ];

@@ -6,8 +6,19 @@ const path = require('path');
 module.exports = (config, { strapi }) => {
   const logFile = config.logFile || '/opt/app/logs/security-audit.log';
   const authPaths = config.authPaths || ['/api/auth', '/admin/login'];
+  const maxBytes = config.maxBytes || 5 * 1024 * 1024;
 
   fs.mkdirSync(path.dirname(logFile), { recursive: true });
+
+  const rotate = () => {
+    try {
+      if (fs.existsSync(logFile) && fs.statSync(logFile).size >= maxBytes) {
+        fs.renameSync(logFile, `${logFile}.1`);
+      }
+    } catch (err) {
+      strapi.log.warn(`[audit-log] rotate failed: ${err.message}`);
+    }
+  };
 
   const isAuthPath = (pathname) => authPaths.some((p) => pathname.startsWith(p));
 
@@ -42,6 +53,7 @@ module.exports = (config, { strapi }) => {
     };
 
     try {
+      rotate();
       fs.appendFileSync(logFile, JSON.stringify(record) + '\n');
     } catch (err) {
       strapi.log.warn(`[audit-log] write failed: ${err.message}`);
