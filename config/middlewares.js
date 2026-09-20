@@ -20,6 +20,12 @@ module.exports = [
   'strapi::favicon',
   'strapi::public',
   {
+    name: 'global::anti-enumeration',
+    config: {
+      paths: ['/api/auth/forgot-password'],
+    },
+  },
+  {
     name: 'global::audit-log',
     config: {
       logFile: '/opt/app/logs/security-audit.log',
