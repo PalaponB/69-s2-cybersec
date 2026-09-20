@@ -22,7 +22,7 @@ module.exports = [
   {
     name: 'global::anti-enumeration',
     config: {
-      paths: ['/api/auth/forgot-password'],
+      paths: ['/api/auth/forgot-password', '/api/auth/send-email-confirmation'],
     },
   },
   {

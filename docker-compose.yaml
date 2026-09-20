@@ -27,6 +27,7 @@ services:
       - 127.0.0.1:${APP_PORT}:1337
     volumes:
       - ./config/plugins.js:/opt/app/config/plugins.js
+      - ./config/admin.js:/opt/app/config/admin.js
       - ./config/middlewares.js:/opt/app/config/middlewares.js
       - ./src/middlewares/rate-limit.js:/opt/app/src/middlewares/rate-limit.js
       - ./src/middlewares/audit-log.js:/opt/app/src/middlewares/audit-log.js
