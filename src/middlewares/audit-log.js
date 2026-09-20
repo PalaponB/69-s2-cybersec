@@ -38,7 +38,6 @@ module.exports = (config, { strapi }) => {
       error = err;
     }
 
-    const recordStatus = error && error.status ? error.status : ctx.status;
     const record = {
       ts: new Date().toISOString(),
       event: 'password-flow',
@@ -47,16 +46,27 @@ module.exports = (config, { strapi }) => {
       ip: ctx.request.ip,
       email,
       userAgent: ctx.request.headers['user-agent'] || '-',
-      status: recordStatus,
-      latencyMs: Date.now() - startedAt,
-      result: recordStatus < 400 ? 'success' : 'failure',
+      status: 0,
+      latencyMs: 0,
+      result: 'n/a',
     };
 
-    try {
-      rotate();
-      fs.appendFileSync(logFile, JSON.stringify(record) + '\n');
-    } catch (err) {
-      strapi.log.warn(`[audit-log] write failed: ${err.message}`);
+    const write = () => {
+      record.status = ctx.status || 500;
+      record.latencyMs = Date.now() - startedAt;
+      record.result = record.status < 400 ? 'success' : 'failure';
+      try {
+        rotate();
+        fs.appendFileSync(logFile, JSON.stringify(record) + '\n');
+      } catch (err) {
+        strapi.log.warn(`[audit-log] write failed: ${err.message}`);
+      }
+    };
+
+    if (ctx.res.writableEnded) {
+      write();
+    } else {
+      ctx.res.once('finish', write);
     }
 
     if (error) {
