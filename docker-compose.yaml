@@ -25,6 +25,13 @@ services:
     container_name: 69-s2-app
     ports:
       - ${APP_PORT}:1337
+    volumes:
+      - ./config/plugins.js:/opt/app/config/plugins.js
+      - ./config/middlewares.js:/opt/app/config/middlewares.js
+      - ./src/middlewares/rate-limit.js:/opt/app/src/middlewares/rate-limit.js
+      - ./src/middlewares/audit-log.js:/opt/app/src/middlewares/audit-log.js
+      - ./src/middlewares/anti-enumeration.js:/opt/app/src/middlewares/anti-enumeration.js
+      - ./logs:/opt/app/logs
     environment:
       DATABASE_CLIENT: postgres
       DATABASE_HOST: db
@@ -32,6 +39,11 @@ services:
       DATABASE_NAME: postgres
       DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_KEYS: ${APP_KEYS}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
     depends_on:
       - db
 
