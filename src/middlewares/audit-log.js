@@ -10,30 +10,6 @@ module.exports = (config, { strapi }) => {
   fs.mkdirSync(path.dirname(logFile), { recursive: true });
 
   const isAuthPath = (pathname) => authPaths.some((p) => pathname.startsWith(p));
-  const isForgotPassword = (pathname) =>
-    ['/admin/forgot-password', '/api/auth/forgot-password'].some((p) => pathname.startsWith(p));
-
-  const readResetToken = async (ctx) => {
-    const pathname = ctx.request.path;
-    const email = ctx.request.body && ctx.request.body.email;
-    if (!email) return null;
-
-    if (pathname.startsWith('/admin/forgot-password')) {
-      const admin = await strapi.db
-        .query('admin::user')
-        .findOne({ where: { email }, select: ['resetPasswordToken'] });
-      return admin ? admin.resetPasswordToken : null;
-    }
-
-    if (pathname.startsWith('/api/auth/forgot-password')) {
-      const user = await strapi.db
-        .query('plugin::users-permissions.user')
-        .findOne({ where: { email }, select: ['resetPasswordToken'] });
-      return user ? user.resetPasswordToken : null;
-    }
-
-    return null;
-  };
 
   return async (ctx, next) => {
     if (!isAuthPath(ctx.request.path)) {
@@ -64,19 +40,6 @@ module.exports = (config, { strapi }) => {
       latencyMs: Date.now() - startedAt,
       result: recordStatus < 400 ? 'success' : 'failure',
     };
-
-    if (isForgotPassword(ctx.request.path)) {
-      try {
-        const hasToken = Boolean(await readResetToken(ctx));
-        if (hasToken) {
-          strapi.log.info(`[reset-token] ${ctx.request.path} -> ${email} -> token generated (use reset-token.ps1)`);
-        } else {
-          strapi.log.warn(`[reset-token] ${ctx.request.path} -> ${email} -> no token in DB`);
-        }
-      } catch (err) {
-        strapi.log.warn(`[reset-token] lookup failed: ${err.message}`);
-      }
-    }
 
     try {
       fs.appendFileSync(logFile, JSON.stringify(record) + '\n');

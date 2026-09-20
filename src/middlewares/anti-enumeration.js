@@ -12,18 +12,12 @@ module.exports = (config, { strapi }) => {
 
     try {
       await next();
-      if (ctx.status === 404) {
-        ctx.status = 200;
-        ctx.body = { ok: true };
-      }
-      return undefined;
     } catch (err) {
-      if (err && (err.status === 404 || String(err.message).toLowerCase().includes('not found'))) {
-        ctx.status = 200;
-        ctx.body = { ok: true };
-        return undefined;
-      }
-      throw err;
+      strapi.log.warn(`[anti-enum] normalized ${ctx.request.path}: ${err.message}`);
     }
+
+    ctx.status = 200;
+    ctx.body = { ok: true };
+    return undefined;
   };
 };

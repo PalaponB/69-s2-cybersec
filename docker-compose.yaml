@@ -31,6 +31,7 @@ services:
       - ./src/middlewares/rate-limit.js:/opt/app/src/middlewares/rate-limit.js
       - ./src/middlewares/audit-log.js:/opt/app/src/middlewares/audit-log.js
       - ./src/middlewares/anti-enumeration.js:/opt/app/src/middlewares/anti-enumeration.js
+      - ./src/providers/provider-email-logsend/index.js:/opt/node_modules/@strapi/provider-email-logsend/index.js
       - ./logs:/opt/app/logs
     environment:
       DATABASE_CLIENT: postgres
