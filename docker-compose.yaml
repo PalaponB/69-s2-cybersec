@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     container_name: 69-s2-db
     ports:
-      - ${POSTGRES_PORT}:5432
+      - 127.0.0.1:${POSTGRES_PORT}:5432
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
@@ -13,7 +13,7 @@ services:
     image: dpage/pgadmin4
     container_name: 69-s2-admin
     ports:
-      - ${PGADMIN_DEFAULT_PORT}:80
+      - 127.0.0.1:${PGADMIN_DEFAULT_PORT}:80
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
@@ -24,13 +24,14 @@ services:
     image: prawee/strapi
     container_name: 69-s2-app
     ports:
-      - ${APP_PORT}:1337
+      - 127.0.0.1:${APP_PORT}:1337
     volumes:
       - ./config/plugins.js:/opt/app/config/plugins.js
       - ./config/middlewares.js:/opt/app/config/middlewares.js
       - ./src/middlewares/rate-limit.js:/opt/app/src/middlewares/rate-limit.js
       - ./src/middlewares/audit-log.js:/opt/app/src/middlewares/audit-log.js
       - ./src/middlewares/anti-enumeration.js:/opt/app/src/middlewares/anti-enumeration.js
+      - ./src/middlewares/password-policy.js:/opt/app/src/middlewares/password-policy.js
       - ./src/providers/provider-email-logsend/index.js:/opt/node_modules/@strapi/provider-email-logsend/index.js
       - ./logs:/opt/app/logs
     environment:
