@@ -4,4 +4,3 @@ data-pgadmin
 api.http
 logs/
 .data/
-reset-token.ps1

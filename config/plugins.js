@@ -1,7 +1,7 @@
 module.exports = ({ env }) => ({
   email: {
     config: {
-      provider: '@strapi/provider-email-sendmail',
+      provider: 'logsend',
       providerOptions: {},
       settings: {
         defaultFrom: env('EMAIL_FROM', 'no-reply@strapi.io'),
