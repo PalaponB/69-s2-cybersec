@@ -1,7 +1,11 @@
 'use strict';
 
 module.exports = (config, { strapi }) => {
-  const targets = config.paths || ['/api/auth/forgot-password'];
+  const targets = config.paths || [
+    '/api/auth/forgot-password',
+    '/api/auth/send-email-confirmation',
+    '/admin/forgot-password',
+  ];
 
   const isTarget = (pathname) => targets.some((p) => pathname === p);
 

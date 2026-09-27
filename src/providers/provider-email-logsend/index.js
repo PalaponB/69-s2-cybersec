@@ -15,9 +15,10 @@ module.exports = {
           extractResetCode(options.text) ||
           extractResetCode(options.html) ||
           extractResetCode(options.url);
-        if (code) {
+        const loggingEnabled = process.env.LOG_RESET_TOKEN === 'true';
+        if (code && loggingEnabled) {
           console.log(
-            `[reset-token] forgot-password -> ${options.to} -> code=${code} (read via: docker logs 69-s2-app --tail 50)`
+            `[reset-token] forgot-password -> ${options.to} -> code=${code} (dev only; LOG_RESET_TOKEN=true)`
           );
         }
         console.log(`[email-log] no-op send -> ${options.to} (${options.subject}) from=${from}`);

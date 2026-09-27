@@ -32,6 +32,8 @@ services:
       - ./src/middlewares/rate-limit.js:/opt/app/src/middlewares/rate-limit.js
       - ./src/middlewares/audit-log.js:/opt/app/src/middlewares/audit-log.js
       - ./src/middlewares/anti-enumeration.js:/opt/app/src/middlewares/anti-enumeration.js
+      - ./src/middlewares/account-lockout.js:/opt/app/src/middlewares/account-lockout.js
+      - ./src/middlewares/token-revocation.js:/opt/app/src/middlewares/token-revocation.js
       - ./src/middlewares/password-policy.js:/opt/app/src/middlewares/password-policy.js
       - ./src/providers/provider-email-logsend/index.js:/opt/node_modules/@strapi/provider-email-logsend/index.js
       - ./logs:/opt/app/logs
@@ -47,6 +49,7 @@ services:
       ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
       API_TOKEN_SALT: ${API_TOKEN_SALT}
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      LOG_RESET_TOKEN: ${LOG_RESET_TOKEN:-false}
     depends_on:
       - db
 
