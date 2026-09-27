@@ -13,23 +13,18 @@
 @user_password = {{$dotenv USER_PASSWORD}}
 @user_new_password = {{$dotenv USER_NEW_PASSWORD}}
 @user_reset_code = {{$dotenv USER_RESET_CODE}}
-# USER_JWT: อย่าเก็บถาวร หลัง login สำเร็จให้เอา token จาก response ใส่ชั่วคราวเพื่อทดสอบ 2.4 แล้วลบออก
+# USER_JWT: อย่าเก็บถาวร หลัง login สำเร็จให้เอา token จาก response ใส่ชั่วคราวเพื่อทดสอบ 2.4 และ section 3 แล้วลบออก
 @user_jwt = {{$dotenv USER_JWT}}
-@student_id = {{$dotenv STUDENT_ID}}
-@student_firstname = {{$dotenv STUDENT_FIRSTNAME}}
-@student_lastname = {{$dotenv STUDENT_LASTNAME}}
-@student_email = {{$dotenv STUDENT_EMAIL}}
-@student_code = {{$dotenv STUDENT_CODE}}
-@subject_id = {{$dotenv SUBJECT_ID}}
-@subject_name = {{$dotenv SUBJECT_NAME}}
-@subject_code = {{$dotenv SUBJECT_CODE}}
-@subject_credits = {{$dotenv SUBJECT_CREDITS}}
-@subject_description = {{$dotenv SUBJECT_DESCRIPTION}}
-@teacher_id = {{$dotenv TEACHER_ID}}
-@teacher_firstname = {{$dotenv TEACHER_FIRSTNAME}}
-@teacher_lastname = {{$dotenv TEACHER_LASTNAME}}
-@teacher_email = {{$dotenv TEACHER_EMAIL}}
-@teacher_department = {{$dotenv TEACHER_DEPARTMENT}}
+@student_name = {{$dotenv STUDENT_NAME}}
+@student_mobile = {{$dotenv STUDENT_MOBILE}}
+@student_cardid = {{$dotenv STUDENT_CARDID}}
+@student_name_update = {{$dotenv STUDENT_NAME_UPDATE}}
+
+@subject_title = {{$dotenv SUBJECT_TITLE}}
+@subject_title_update = {{$dotenv SUBJECT_TITLE_UPDATE}}
+
+@teacher_name = {{$dotenv TEACHER_NAME}}
+@teacher_name_update = {{$dotenv TEACHER_NAME_UPDATE}}
 
 ## 1.Admin
 ### 1.1 Login
@@ -122,16 +117,23 @@ Content-Type: application/json
 GET http://{{hostname}}:{{port}}/api/users/me
 Authorization: Bearer {{user_jwt}}
 
-## 3.Content
+## 3. Content section
 # Prerequisites before running section 3:
-#   1. Content-Type Builder -> create Collection Type with API ID: student, subject, teacher
-#   2. Add the fields used in the payloads below (see .env comments for the field list)
-#   3. Settings -> Users & Permissions -> Public/Authenticated role -> enable
-#      create/find/findOne/update for student, subject, teacher
-#   4. Login 2.1 first, put the returned jwt in USER_JWT in .env
-#      (admin jwt does NOT work on /api/* content endpoints)
-#   5. Run 3.x.1 Create first, then copy the returned data.id into
-#      STUDENT_ID / SUBJECT_ID / TEACHER_ID in .env before running 3.x.3 / 3.x.4
+#   1. USER_JWT is intentionally empty in .env. Run 2.1 Login first, then copy the
+#      jwt from the response into USER_JWT in .env, otherwise every request here
+#      returns 403. (Admin jwt does NOT work on /api/* content endpoints.)
+#   2. Settings -> Users & Permissions -> Authenticated role must have
+#      create/find/findOne/update enabled for student, subject and teacher.
+#   3. Fields used below (Content-Type Builder):
+#      student -> name (required), mobile (required, unique, exactly 10 chars),
+#                 cardId (required, unique, exactly 13 chars)
+#      subject -> name (required, unique)
+#      teacher -> name (required)
+#   4. Run 3.x.1 Create before 3.x.3 / 3.x.4. mobile, cardId and subject name are
+#      unique, so re-running 3.1.1 / 3.2.1 with a value that already exists in the
+#      database returns 400. Put a new value in .env to run them again.
+#   5. 3.x.3 / 3.x.4 address id 1, which is the record created by 3.x.1 on a fresh
+#      database. After deleting that record, change the id in the URL.
 
 ### 3.1 Student
 #### 3.1.1 Create
@@ -141,32 +143,28 @@ Authorization: Bearer {{user_jwt}}
 
 {
     "data": {
-        "firstname": "{{student_firstname}}",
-        "lastname": "{{student_lastname}}",
-        "email": "{{student_email}}",
-        "code": "{{student_code}}"
+        "name": "{{student_name}}",
+        "mobile": "{{student_mobile}}",
+        "cardId": "{{student_cardid}}"
     }
 }
 
 #### 3.1.2 List All
-GET http://{{hostname}}:{{port}}/api/students?pagination[pageSize]=25&sort=code:asc
+GET http://{{hostname}}:{{port}}/api/students
 Authorization: Bearer {{user_jwt}}
 
 #### 3.1.3 List with ID
-GET http://{{hostname}}:{{port}}/api/students/{{student_id}}
+GET http://{{hostname}}:{{port}}/api/students/1
 Authorization: Bearer {{user_jwt}}
 
 #### 3.1.4 Update
-PUT http://{{hostname}}:{{port}}/api/students/{{student_id}}
+PUT http://{{hostname}}:{{port}}/api/students/1
 Content-Type: application/json
 Authorization: Bearer {{user_jwt}}
 
 {
     "data": {
-        "firstname": "{{student_firstname}}",
-        "lastname": "{{student_lastname}}",
-        "email": "{{student_email}}",
-        "code": "{{student_code}}"
+        "name": "{{student_name_update}}"
     }
 }
 
@@ -178,32 +176,26 @@ Authorization: Bearer {{user_jwt}}
 
 {
     "data": {
-        "name": "{{subject_name}}",
-        "code": "{{subject_code}}",
-        "credits": "{{subject_credits}}",
-        "description": "{{subject_description}}"
+        "name": "{{subject_title}}"
     }
 }
 
 #### 3.2.2 List All
-GET http://{{hostname}}:{{port}}/api/subjects?pagination[pageSize]=25&sort=code:asc
+GET http://{{hostname}}:{{port}}/api/subjects
 Authorization: Bearer {{user_jwt}}
 
 #### 3.2.3 List with ID
-GET http://{{hostname}}:{{port}}/api/subjects/{{subject_id}}
+GET http://{{hostname}}:{{port}}/api/subjects/1
 Authorization: Bearer {{user_jwt}}
 
 #### 3.2.4 Update
-PUT http://{{hostname}}:{{port}}/api/subjects/{{subject_id}}
+PUT http://{{hostname}}:{{port}}/api/subjects/1
 Content-Type: application/json
 Authorization: Bearer {{user_jwt}}
 
 {
     "data": {
-        "name": "{{subject_name}}",
-        "code": "{{subject_code}}",
-        "credits": "{{subject_credits}}",
-        "description": "{{subject_description}}"
+        "name": "{{subject_title_update}}"
     }
 }
 
@@ -215,31 +207,25 @@ Authorization: Bearer {{user_jwt}}
 
 {
     "data": {
-        "firstname": "{{teacher_firstname}}",
-        "lastname": "{{teacher_lastname}}",
-        "email": "{{teacher_email}}",
-        "department": "{{teacher_department}}"
+        "name": "{{teacher_name}}"
     }
 }
 
 #### 3.3.2 List All
-GET http://{{hostname}}:{{port}}/api/teachers?pagination[pageSize]=25&sort=lastname:asc
+GET http://{{hostname}}:{{port}}/api/teachers
 Authorization: Bearer {{user_jwt}}
 
 #### 3.3.3 List with ID
-GET http://{{hostname}}:{{port}}/api/teachers/{{teacher_id}}
+GET http://{{hostname}}:{{port}}/api/teachers/1
 Authorization: Bearer {{user_jwt}}
 
 #### 3.3.4 Update
-PUT http://{{hostname}}:{{port}}/api/teachers/{{teacher_id}}
+PUT http://{{hostname}}:{{port}}/api/teachers/1
 Content-Type: application/json
 Authorization: Bearer {{user_jwt}}
 
 {
     "data": {
-        "firstname": "{{teacher_firstname}}",
-        "lastname": "{{teacher_lastname}}",
-        "email": "{{teacher_email}}",
-        "department": "{{teacher_department}}"
+        "name": "{{teacher_name_update}}"
     }
 }
